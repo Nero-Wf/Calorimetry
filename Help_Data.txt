@@ -1,0 +1,1 @@
+Here we can see the 4 different graphs that are recorded in real time.

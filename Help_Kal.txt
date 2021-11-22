@@ -1,0 +1,8 @@
+To start the recording of real-time data of the Kalorimeter, insert the COM Port and press the "start" button.
+To see the Data displayed, go to the second tab.
+To stop the data recording, simply press the "stop" button. The data will be saved as an excel file called "Data", don't forget to rename it before starting an new run.
+
+Calorimeter Use:
+-Input operating points in the format (time, temperature, [flowrate 1, flowrate 2])
+-Input substance data in the format ([weight A, weight B], [volume A, volume B], [molar mass A, molar mass B], [Substance assignement 1, Substance assignement 2])
+-Input Strategy with operating points and substance data
