@@ -143,7 +143,7 @@ class Initialization(QMainWindow):
         #we create a help text on the side of the tab
         self.helpWindow = QDockWidget()
         self.subwidget = QPlainTextEdit()
-        self.text = open("Help_Kal.txt").read()
+        self.text = open("Calorimetry\Help_Kal.txt").read()
         self.subwidget.setPlainText(self.text)
         self.subwidget.setReadOnly(True)
 
@@ -303,7 +303,7 @@ class Graph(QMainWindow):
         #as for the first tab, we create a help text on the side, and a menu at the top
         self.helpWindow = QDockWidget()
         self.subwidget = QPlainTextEdit()
-        self.text = open("Help_Data.txt").read()
+        self.text = open("Calorimetry\Help_Data.txt").read()
         self.subwidget.setPlainText(self.text)
         self.subwidget.setReadOnly(True)
 
