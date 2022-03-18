@@ -222,7 +222,7 @@ class Output_Calculation_Absolute_Evaluation(pyStrategy.Strategy_Base):
             self.sheet[0].cell(row=self.counter[3][1]-1, column=self.counter[3][2]).value = enthalpy_difference
 
             # save changes 
-            self.workbook.save("{}.xlsx".format(self.excel_name))
+            self.workbook.save("Calorimetry\{0}.xlsx".format(self.excel_name))
 
     def point_complete(self):
         if self.state == Output_Calculation_Absolute_Evaluation.States.TEMPERATURE_EQUILIBRATION:
@@ -247,7 +247,7 @@ class Output_Calculation_Absolute_Evaluation(pyStrategy.Strategy_Base):
             return False
         elif self.state == Output_Calculation_Absolute_Evaluation.States.WAITING_FOR_DEADLINE:
             if self.cur_deadline < time.monotonic_ns():
-                self.workbook.save("{}.xlsx".format(self.excel_name))
+                self.workbook.save("Calorimetry\{0}.xlsx".format(self.excel_name))
                 return True
             else:
                 return False
@@ -325,4 +325,4 @@ class Output_Calculation_Absolute_Evaluation(pyStrategy.Strategy_Base):
             self.sheet[0].cell(row=idx+3, column=9).fill = PatternFill("lightTrellis", fgColor=add_data_color)
             self.sheet[0].cell(row=3, column=idx+8).border = Border(top=Side(border_style="thick"))    
         
-        self.workbook.save("{}.xlsx".format(self.excel_name))
+        self.workbook.save("Calorimetry\{0}.xlsx".format(self.excel_name))

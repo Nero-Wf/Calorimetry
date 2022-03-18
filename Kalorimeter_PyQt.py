@@ -1,9 +1,11 @@
 #first we import all the modules needed for this script
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from PySide6.QtCore import *
+from PySide6.QtWidgets import QTabWidget, QWidget, QMainWindow, QGridLayout, QLineEdit, QLabel, QPushButton, QApplication, QDockWidget, QTableWidget, QPlainTextEdit, QMenuBar, QTableWidgetItem
+from PySide6.QtGui import QPalette, QAction
 
 import numpy as np
+import pandas as pd
+
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 from matplotlib.figure import Figure
@@ -54,7 +56,7 @@ class TopLevelWindow(QWidget):
         oTabWidget.addTab(oPage3,"Data Manipulation")
 
         #this is a fairly complicated part, we give the main window a function which it will call every 2000 miliseconds, to refresh our graphs in the second tab
-        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.graph_plotter, interval = 2000)
+        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 2000)
 
         #finally, we give the command to actually show all the parts we inserted above on the main window
         self.show()
@@ -131,8 +133,7 @@ class Initialization(QMainWindow):
         self.data_table = QTableWidget(10,5)
         for i in range(5):
             self.data_table.setColumnWidth(i,150)
-        self.header_labels = ["0", "1", "2",
-        "3", "4"]
+        self.header_labels = ["0", "1", "2", "3", "4"]
         self.insert_in_table(number = 0, values = self.header_labels)
         
         self.overall_grid.addWidget(self.data_table, 6, 0, 10, 4)
@@ -162,9 +163,6 @@ class Initialization(QMainWindow):
 
         self.setMenuBar(self.menuBar)
 
-        #and finally we create a virtual excel sheet, that will take in our data
-        self.book = openpyxl.Workbook()
-        self.sheet = self.book.active
     
     def insert_in_table(cls,number, values):
 
@@ -172,7 +170,14 @@ class Initialization(QMainWindow):
             item = QTableWidgetItem()
             item.setText(str(values[i]))
             cls.data_table.setItem(number, (i), item)
+        
+    def insert_in_dataframe(self, values):
 
+        self.value_frame.concat(values)
+        print(self.value_frame)
+
+
+    
     def data_thread(self):
         #this is the function that creates a thread which will take our data and put it in the excel sheet
         self.thread = Data_Thread(self, Initialization)
@@ -196,7 +201,6 @@ class Initialization(QMainWindow):
         
         # Erstellen der Strategie
         self.strategy = Strategy_OCAE.Output_Calculation_Absolute_Evaluation(operation_point_list, self.substance_data, val2, "strategy_test")
-        
         
         self.tmp_op = self.strategy.get_operation_point()
         
@@ -291,8 +295,6 @@ class Graph(QMainWindow):
         self.sub_graph_4.set_title("PWM")
         
         self.values = [[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-    
-        self.max_excel_row = 0
 
         #now we put the figure into a canvas that we can insert into our actual GUI window
         self.canvas = FigureCanvasQTAgg(self.graph)
@@ -325,39 +327,34 @@ class Graph(QMainWindow):
         self.toolbar = NavigationToolbar2QT(self.canvas, self)
 
         self.addToolBar(self.toolbar)
-
-
-    def graph_plotter(self, buffer_var):
-        #this is the function that takes the excel sheet from the first tabs, and plots the data in it in our 4 subplots
-        sheet_1 = self.instance.sheet
-        
-        counter = 0
-        for i in self.values:
-            try:
-                i.append(self.instance.value[counter])
-                counter += 1
-            except:
-                pass
-        
+    
+    def real_time_plotter(self, buffer):
+        #this is the function that plots the data from the equipment in real time
+    
         self.sub_graph_1.clear()
         self.sub_graph_2.clear()
         self.sub_graph_3.clear()
         self.sub_graph_4.clear()
-        
-        
-        #and then we plot our new values into the empty graphs
-        for x in (self.values[1], self.values[2], self.values[3], self.values[4]):
-            self.sub_graph_1.plot(self.values[0], x)
 
-        for x in (self.values[8], self.values[9], self.values[10]):
-            self.sub_graph_2.plot(self.values[0], x)
+        try:
+            for i in self.instance.strategy.datalist:
+                for j in range(len(self.values)):
+                    self.values[j].append(i[j])
 
-        for x in (self.values[11], self.values[12], self.values[13],self.values[14]):
-            self.sub_graph_3.plot(self.values[0], x)
+            #and then we plot our new values into the empty graphs
+            for x in (self.values[1], self.values[2], self.values[3], self.values[4]):
+                self.sub_graph_1.plot(self.values[0], x)
 
-        for x in (self.values[18], self.values[19],self.values[20]):
-            self.sub_graph_4.plot(self.values[0], x)
+            for x in (self.values[8], self.values[9], self.values[10]):
+                self.sub_graph_2.plot(self.values[0], x)
 
+            #for x in (self.values[11], self.values[12], self.values[13],self.values[14]):
+            #    self.sub_graph_3.plot(self.values[0], x)
+
+            #for x in (self.values[18], self.values[19],self.values[20]):
+            #    self.sub_graph_4.plot(self.values[0], x)
+        except:
+            pass
 
 class Data_Processing(QMainWindow):
     def __init__(self):
@@ -392,15 +389,19 @@ def stop_all_Threads():
 
 #------------------------------------------------------------------------------
 #now that we have all the needed classes, we actually create an opbject out of them
+def main():
+    app = QApplication([])
+    app.setStyle("Fusion")
 
-app = QApplication([])
-app.setStyle("Fusion")
+    palette = QPalette()
+    palette.setColor(QPalette.ButtonText, Qt.black)
+    app.setPalette(palette)
 
-palette = QPalette()
-palette.setColor(QPalette.ButtonText, Qt.black)
-app.setPalette(palette)
+    #this is the main object, which includes basically all the code from above
+    Main = TopLevelWindow()
 
-#this is the main object, which includes basically all the code from above
-Main = TopLevelWindow()
+    app.exec()
 
-app.exec_()
+if __name__ == "__main__":
+    main()
+stop_all_Threads()

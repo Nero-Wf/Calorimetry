@@ -60,6 +60,6 @@ def create_excel(substance_data, file_name):
     # setup the evaluation sheet
     sheet[1].append(["Elapsed_Time", "T_set", "T_pre", "T_r1", "T_r2", "T_A", "T_B", "T_out", "U_pre", "U_r1", "U_r2"])
 
-    wb.save("{}.xlsx".format(file_name))
+    wb.save("Calorimetry\{0}.xlsx".format(file_name))
 
     return wb, sheet, ret_counter
