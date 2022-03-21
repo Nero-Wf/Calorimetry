@@ -82,10 +82,10 @@ class Initialization(QMainWindow):
         self.overall_grid.addWidget(self.start_opt, 5,0)
         self.overall_grid.addWidget(self.start_test, 5,1)
         
-        self.data_table = QTableWidget(10,5)
-        for i in range(5):
+        self.data_table = QTableWidget(10,4)
+        for i in range(4):
             self.data_table.setColumnWidth(i,150)
-        self.header_labels = ["0", "1", "2", "3", "4"]
+        self.header_labels = ["Operating time [s]", "Temperature [°C]", "Flowrate 1 [mL/min]", "Flowrate 2 [mL/min]"]
         self.insert_in_table(number = 0, values = self.header_labels)
         
         self.overall_grid.addWidget(self.data_table, 6, 0, 10, 4)
@@ -125,13 +125,6 @@ class Initialization(QMainWindow):
             item.setText(str(values[i]))
             cls.data_table.setItem(number, (i), item)
         
-    def insert_in_dataframe(self, values):
-
-        self.value_frame.concat(values)
-        print(self.value_frame)
-
-
-    
     def data_thread(self):
         #this is the function that creates a thread which will take our data and put it in the excel sheet
         self.thread = Data_Thread(self, Initialization)
@@ -143,12 +136,39 @@ class Initialization(QMainWindow):
         
     def test_points(self):
         # Betriebspunkte Liste
-        val = 0.3*60*1E3
+        #val = 0.3*60*1E3
         val2 = 0.1*60*1E3
-        operation_point_list = [
-            Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
-            Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
-        ]
+
+
+        #operation_point_list = [
+        #    Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
+        #    Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
+        #]
+        
+        rowdata = []
+        for row in range(self.data_table.rowCount()):
+                    for column in range(self.data_table.columnCount()):
+                        item = self.data_table.item(row, column)
+                        if item is not None:
+                            rowdata.append(item.text())
+                            print(item.text())
+                        else:
+                            break
+        
+        # List of operating points
+        operation_point_list = []
+
+        point_number = len(rowdata) // 4
+        print(point_number)
+
+        for i in range(0,(point_number*4-4),4):
+            op_time = float(rowdata[i+4]) * 1E3
+            temperature = float(rowdata[i+5])
+            flowrate1 = float(rowdata[i+6])
+            flowrate2 = float(rowdata[i+7])
+            operation_point_list.append(Strategy_OCAE.operation_point_list_entry(op_time, temperature, [flowrate1, flowrate2]))
+
+        print("Number of points: ", len(operation_point_list))
         
         # Stoffdaten
         self.substance_data = Strategy_OCAE.substance_data([4, 6], [50, 50], [40.01, 60.05], ["B", "A"])
@@ -173,7 +193,7 @@ class Initialization(QMainWindow):
                 try:
                     self.point_finished_list.append(self.strategy.datalist[-1][0])
                 except:
-                    print("no point recoreded yet")
+                    print("no point recorded yet")
 
                 
             self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
@@ -198,14 +218,32 @@ class Initialization(QMainWindow):
         dead_time = 0.1*60*1E3
         excel_file_name = "strategy_ocae"
         
-        # List of operating points
-        operation_point_list = [
-            Strategy_OCAE.operation_point_list_entry(operating_time, 25, [6.1, 6.05]),
-            Strategy_OCAE.operation_point_list_entry(operating_time, 25, [6.1, 6.05]),
-            Strategy_OCAE.operation_point_list_entry(operating_time, 25, [6.1, 6.05]),
-            Strategy_OCAE.operation_point_list_entry(operating_time, 25, [6.1, 6.05]),
-        ]
         
+        rowdata = []
+        for row in range(self.data_table.rowCount()):
+                    for column in range(self.data_table.columnCount()):
+                        item = self.data_table.item(row, column)
+                        if item is not None:
+                            rowdata.append(item.text())
+                            print(item.text())
+                        else:
+                            break
+        
+        # List of operating points
+        operation_point_list = []
+
+        point_number = len(rowdata) // 4
+        print(point_number)
+
+        for i in range(0,(point_number*4-4),4):
+            op_time = float(rowdata[i+4]) * 1E3
+            temperature = float(rowdata[i+5])
+            flowrate1 = float(rowdata[i+6])
+            flowrate2 = float(rowdata[i+7])
+            operation_point_list.append(Strategy_OCAE.operation_point_list_entry(op_time, temperature, [flowrate1, flowrate2]))
+
+        print("Number of points: ", len(operation_point_list))
+
         # Substance data 
         substance_data = Strategy_OCAE.substance_data([4, 6], [50, 50], [40.01, 60.05], ["B", "A"])
         
