@@ -14,6 +14,7 @@ class Graph(QMainWindow):
 
         #this class is for the tab that should have our graphs in it
 
+        #we also need to know the initialization graph instance, so we can get the data from it 
         self.instance = instance
 
         #first we create the figure with a specific size
@@ -76,23 +77,50 @@ class Graph(QMainWindow):
         self.sub_graph_3.clear()
         self.sub_graph_4.clear()
 
+        self.sub_graph_1.set_title("Reactor Temp")
+        self.sub_graph_2.set_title("Inlet Temps")
+        self.sub_graph_3.set_title("Voltage")
+        self.sub_graph_4.set_title("PWM")
+
         try:
             for i in self.instance.strategy.datalist:
                 for j in range(len(self.values)):
                     self.values[j].append(i[j])
 
             #and then we plot our new values into the empty graphs
-            for x in (self.values[1], self.values[2], self.values[3], self.values[4]):
-                self.sub_graph_1.plot(self.values[0], x)
+              
+            self.sub_graph_1.plot(self.values[0], self.values[1], label = "t_set")
+            self.sub_graph_1.plot(self.values[0], self.values[2], label = "t_pre")
+            self.sub_graph_1.plot(self.values[0], self.values[8], label = "t_A")
+            self.sub_graph_1.plot(self.values[0], self.values[9], label = "t_B")
+            self.sub_graph_1.plot(self.values[0], self.values[10], label = "t_out")
+            self.sub_graph_1.legend(loc=1)
+            
+            self.sub_graph_2.plot(self.values[0], self.values[1], label = "t_set")
+            self.sub_graph_2.plot(self.values[0], self.values[3], label = "t_r1")
+            self.sub_graph_2.plot(self.values[0], self.values[4], label = "t_r2")
+            self.sub_graph_2.plot(self.values[0], self.values[5], label = "t_r3")
+            self.sub_graph_2.plot(self.values[0], self.values[6], label = "t_r4")
+            self.sub_graph_2.plot(self.values[0], self.values[7], label = "t_r5")
+            self.sub_graph_2.legend(loc=1)
+            
+            self.sub_graph_3.plot(self.values[0], self.values[11], label = "U_pre")
+            self.sub_graph_3.plot(self.values[0], self.values[12], label = "U_r1")
+            self.sub_graph_3.plot(self.values[0], self.values[13], label = "U_r2")
+            self.sub_graph_3.plot(self.values[0], self.values[14], label = "U_r3")
+            self.sub_graph_3.plot(self.values[0], self.values[15], label = "U_r4")
+            self.sub_graph_3.plot(self.values[0], self.values[16], label = "U_r5")
+            self.sub_graph_3.legend(loc=1)
 
-            for x in (self.values[8], self.values[9], self.values[10]):
-                self.sub_graph_2.plot(self.values[0], x)
+            
+            self.sub_graph_4.plot(self.values[0], self.values[17], label = "PWM_pre")
+            self.sub_graph_4.plot(self.values[0], self.values[18], label = "PWM_r1")
+            self.sub_graph_4.plot(self.values[0], self.values[19], label = "PWM_r2")
+            self.sub_graph_4.plot(self.values[0], self.values[20], label = "PWM_r3")
+            self.sub_graph_4.plot(self.values[0], self.values[21], label = "PWM_r4")
+            self.sub_graph_4.plot(self.values[0], self.values[22], label = "PWM_r5")
+            self.sub_graph_4.legend(loc=1)
 
-            for x in (self.values[11], self.values[12], self.values[13],self.values[14]):
-                self.sub_graph_3.plot(self.values[0], x)
-
-            for x in (self.values[18], self.values[19],self.values[20]):
-                self.sub_graph_4.plot(self.values[0], x)
         except:
             pass
 
