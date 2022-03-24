@@ -137,7 +137,9 @@ class Initialization(QMainWindow):
     def test_points(self):
         # Betriebspunkte Liste
         #val = 0.3*60*1E3
-        val2 = 0.1*60*1E3
+        #val2 = 0.1*60*1E3
+        
+        val2 = float(self.name_6.text())*1E3
 
 
         #operation_point_list = [
@@ -195,7 +197,6 @@ class Initialization(QMainWindow):
                 except:
                     print("no point recorded yet")
 
-                
             self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
             time_ += 2
         
@@ -209,15 +210,17 @@ class Initialization(QMainWindow):
                 new_point = True
                 self.tmp_op = self.strategy.get_operation_point()
         
-            time.sleep(2)
+            time.sleep(1)
         self.strategy.get_finish_instruction()
         print("Done")
     
     def real_points(self):
-        operating_time = 0.3*60*1E3
-        dead_time = 0.1*60*1E3
-        excel_file_name = "strategy_ocae"
+        #operating_time = 0.3*60*1E3
+        #dead_time = 0.1*60*1E3
         
+        dead_time = float(self.name_6.text())*1E3
+
+        excel_file_name = "strategy_ocae"
         
         rowdata = []
         for row in range(self.data_table.rowCount()):

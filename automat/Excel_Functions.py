@@ -58,7 +58,7 @@ def create_excel(substance_data, file_name):
     ret_counter[0][1] = 5
 
     # setup the evaluation sheet
-    sheet[1].append(["Elapsed_Time", "T_set", "T_pre", "T_r1", "T_r2", "T_A", "T_B", "T_out", "U_pre", "U_r1", "U_r2"])
+    sheet[1].append(["Elapsed_Time", "T_set", "T_pre", "T_r1", "T_r2", "T_r3", "T_r4", "T_r5", "T_A", "T_B", "T_out", "U_pre", "U_r1", "U_r2", "U_r3", "U_r4", "U_r5", "PWM_pre", "PWM_r1", "PWM_r2", "PWM_r3", "PWM_r4", "PWM_r5", "mW_pre", "mW_r1", "mW_r2", "mW_r3", "mW_r4", "mW_r5"])
 
     wb.save("Calorimetry\{0}.xlsx".format(file_name))
 

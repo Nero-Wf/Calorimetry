@@ -5,8 +5,6 @@ from PySide6.QtGui import QPalette
 
 import matplotlib.animation as animation
 
-
-
 from Initialization import Initialization
 from Graph_Window import Graph
 from Data_Processing import Data_Processing
@@ -74,4 +72,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-stop_all_Threads()
+    stop_all_Threads()
