@@ -71,7 +71,7 @@ class Graph(QMainWindow):
     
     def real_time_plotter(self, buffer):
         #this is the function that plots the data from the equipment in real time
-    
+
         self.sub_graph_1.clear()
         self.sub_graph_2.clear()
         self.sub_graph_3.clear()

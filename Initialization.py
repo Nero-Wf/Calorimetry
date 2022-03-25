@@ -118,7 +118,7 @@ class Initialization(QMainWindow):
         self.point_finished_list = []
 
     
-    def insert_in_table(cls,number, values):
+    def insert_in_table(cls,number: int, values: list):
 
         for i in range(len(values)):
             item = QTableWidgetItem()
