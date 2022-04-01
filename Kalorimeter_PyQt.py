@@ -1,7 +1,7 @@
 #first we import all the modules needed for this script
 from PySide6.QtCore import *
 from PySide6.QtWidgets import QTabWidget, QWidget, QApplication
-from PySide6.QtGui import QPalette
+from PySide6.QtGui import QPalette, QCloseEvent
 
 import matplotlib.animation as animation
 
@@ -44,6 +44,10 @@ class TopLevelWindow(QWidget):
 
         #finally, we give the command to actually show all the parts we inserted above on the main window
         self.show()
+    
+    def closeEvent(self, event: QCloseEvent) -> None:
+        stop_all_Threads()
+        return super().closeEvent(event)
 
 
 def stop_all_Threads():

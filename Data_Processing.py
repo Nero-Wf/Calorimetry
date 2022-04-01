@@ -19,18 +19,15 @@ class Data_Thread(threading.Thread):
         self.use = use
         self.task = task
     def run(self):
-        global stop_threads
-        stop_threads = False
-        while (stop_threads == False):
+        self.stop_threads = False
+        while (self.stop_threads == False):
             self.task.datalogger(self.use)
             break
         print ("Thread ends")
 
-
-def stop_all_Threads():
-    """function to stop all threads via the stop command"""
-    #we first declare this variable to be a global variable, and then set it to true.
-    #this stops the loop of the thread.
-    global stop_threads
-    stop_threads = True
-    print("all Threads stopped")
+    def stop_all_Threads(self):
+        """function to stop all threads via the stop command"""
+        #we first declare this variable to be a global variable, and then set it to true.
+        #this stops the loop of the thread.
+        self.stop_threads = True
+        print("all Threads stopped")

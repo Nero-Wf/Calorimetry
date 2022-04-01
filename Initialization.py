@@ -1,4 +1,5 @@
 #first we import all the modules needed for this script
+from concurrent.futures import thread
 from PySide6.QtCore import *
 from PySide6.QtWidgets import QWidget, QMainWindow, QGridLayout, QLineEdit, QLabel, QPushButton, QDockWidget, QTableWidget, QPlainTextEdit, QMenuBar, QTableWidgetItem
 from PySide6.QtGui import QAction
@@ -48,8 +49,8 @@ class Initialization(QMainWindow):
         self.start_opt = QPushButton("Start Recording")
         self.start_opt.clicked.connect(lambda:[self.data_thread()])
 
-        self.start_test = QPushButton("Stop Recording")
-        self.start_test.clicked.connect(stop_all_Threads)
+        self.stop_opt = QPushButton("Stop Recording")
+        self.stop_opt.clicked.connect(lambda:[self.thread.stop_all_Threads()])
 
         #now we make a widget with a specific height
         self.overall_main = QWidget()
@@ -81,14 +82,17 @@ class Initialization(QMainWindow):
         self.overall_grid.addWidget(self.name_7, 3,2)
         self.overall_grid.addWidget(self.name_8, 3,3)
 
-        self.overall_grid.addWidget(self.start_opt, 5,0)
-        self.overall_grid.addWidget(self.start_test, 5,1)
+        self.overall_grid.addWidget(self.start_opt, 2,0)
+        self.overall_grid.addWidget(self.stop_opt, 3,0)
         
         self.data_table = QTableWidget(10,4)
         for i in range(4):
             self.data_table.setColumnWidth(i,150)
         self.header_labels = ["Operating time [s]", "Temperature [°C]", "Flowrate 1 [mL/min]", "Flowrate 2 [mL/min]"]
         self.insert_in_table(number = 0, values = self.header_labels)
+
+        example_point = [20,25,1,1]
+        self.insert_in_table(number=1, values =example_point)
         
         self.overall_grid.addWidget(self.data_table, 6, 0, 10, 4)
 
@@ -146,7 +150,6 @@ class Initialization(QMainWindow):
                         item = self.data_table.item(row, column)
                         if item is not None:
                             rowdata.append(item.text())
-                            print(item.text())
                         else:
                             break
         
@@ -154,7 +157,7 @@ class Initialization(QMainWindow):
         operation_point_list = []
 
         point_number = len(rowdata) // 4
-        print(point_number)
+
 
         for i in range(0,(point_number*4-4),4):
             op_time = float(rowdata[i+4]) * 1000
@@ -162,6 +165,7 @@ class Initialization(QMainWindow):
             flowrate1 = float(rowdata[i+6])
             flowrate2 = float(rowdata[i+7])
             operation_point_list.append(Strategy_OCAE.operation_point_list_entry(op_time, temperature, [flowrate1, flowrate2]))
+
 
         print("Number of points: ", len(operation_point_list))
         
@@ -192,14 +196,15 @@ class Initialization(QMainWindow):
         
             self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
             for i in range(1,len(self.value)):
-                self.value[i] = self.value[i] * random.randrange(90,110)/100
-            time_ += 2
+                self.value[i] = round(self.value[i] * random.randrange(90,110)/100,2)
+            time_ += 1
         
             self.strategy.push_value(self.value)
             print(self.value)
         
             if self.strategy.has_error():
                 raise Exception("error")
+        
         
             if self.strategy.point_complete():
                 new_point = True
@@ -210,10 +215,8 @@ class Initialization(QMainWindow):
         print("Done")
     
     def real_points(self):
-        #operating_time = 0.3*60*1E3
-        #dead_time = 0.1*60*1E3
         
-        dead_time = float(self.name_6.text())*1E3
+        dead_time = float(self.name_6.text())*1000
 
         excel_file_name = "strategy_ocae"
         
@@ -234,7 +237,7 @@ class Initialization(QMainWindow):
         print(point_number)
 
         for i in range(0,(point_number*4-4),4):
-            op_time = float(rowdata[i+4]) * 1E3
+            op_time = float(rowdata[i+4]) * 1000
             temperature = float(rowdata[i+5])
             flowrate1 = float(rowdata[i+6])
             flowrate2 = float(rowdata[i+7])
@@ -246,9 +249,9 @@ class Initialization(QMainWindow):
         substance_data = Strategy_OCAE.substance_data([4, 6], [50, 50], [40.01, 60.05], ["B", "A"])
         
         # Devices used
-        User_Pumps = [["Lambda 1", "COM12"], ["Lambda 3", "COM11"]] # [["HPLC A", "COM12"], ["HPLC B", "COM11"]] 
-        User_Fisher = ["COM8"]
-        Portname_Calorimeter = "COM6"
+        User_Pumps = [[self.template3.text(), self.name_3.text()], [self.template4.text(), self.name_4.text()]] # [["HPLC A", "COM12"], ["HPLC B", "COM11"]] 
+        User_Fisher = [self.name_2.text()]
+        Portname_Calorimeter = self.name_1.text()
         
         # Setting up the strategy
         self.strategy = Strategy_OCAE.Output_Calculation_Absolute_Evaluation(operation_point_list, substance_data, dead_time, excel_file_name)
@@ -267,9 +270,9 @@ class Initialization(QMainWindow):
     
     def calorimeter_only(self):
 
-        calorimeter_communication = Communication.Handle("COM6", 9600, Communication.Handle.PARITY_NONE, 1)
+        calorimeter_communication = Communication.Handle(self.name_1.text(), 9600, Communication.Handle.PARITY_NONE, 1)
      
-        val2 = float(self.name_6.text())*1E3
+        val2 = float(self.name_6.text())*1000
 
         #get the information from the table of the GUI
         rowdata = []
@@ -290,7 +293,7 @@ class Initialization(QMainWindow):
 
         # get the data from the rowdata list and transform them into actual operation points and put them in the Strategy list
         for i in range(0,(point_number*4-4),4):
-            op_time = float(rowdata[i+4]) * 1E3
+            op_time = float(rowdata[i+4]) * 1000
             temperature = float(rowdata[i+5])
             flowrate1 = float(rowdata[i+6])
             flowrate2 = float(rowdata[i+7])
@@ -326,7 +329,7 @@ class Initialization(QMainWindow):
 
             #self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
             self.value = calorimeter_communication.receive().decode('utf-8')
-            time_ += 2
+            time_ += 1
         
             self.strategy.push_value(self.value)
             print(self.value)
@@ -341,11 +344,3 @@ class Initialization(QMainWindow):
             time.sleep(1)
         self.strategy.get_finish_instruction()
         print("Done")
-
-def stop_all_Threads():
-    """function to stop all threads via the stop command"""
-    #we first declare this variable to be a global variable, and then set it to true.
-    #this stops the loop of the thread.
-    global stop_threads
-    stop_threads = True
-    print("all Threads stopped")
