@@ -40,7 +40,7 @@ class TopLevelWindow(QWidget):
         oTabWidget.addTab(oPage3,"Data Manipulation")
 
         #this is a fairly complicated part, we give the main window a function which it will call every 2000 miliseconds, to refresh our graphs in the second tab
-        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 2000)
+        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 500)
 
         #finally, we give the command to actually show all the parts we inserted above on the main window
         self.show()

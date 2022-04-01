@@ -7,10 +7,12 @@ from openpyxl import load_workbook
 
 
 import time
+import random
 
 import automat.Calorimeter as Calorimeter
 import automat.Auto as Auto
 import automat.Strategy_OCAE as Strategy_OCAE
+import automat.Communication as Communication
 
 from Data_Processing import Data_Thread
 
@@ -32,12 +34,12 @@ class Initialization(QMainWindow):
         self.name_3 = QLineEdit("COM13")
         self.name_4 = QLineEdit("COM14")
         
-        self.template5 = QLabel("Operating Time:")
+        #self.template5 = QLabel("Operating Time:")
         self.template6 = QLabel("Dead Time:")
         self.template7 = QLabel("Pump 1 Name:")
         self.template8 = QLabel("Pump 2 Name:")
         
-        self.name_5 = QLineEdit("20")
+        #self.name_5 = QLineEdit("20")
         self.name_6 = QLineEdit("10")
         self.name_7 = QLineEdit("Lambda 1")
         self.name_8 = QLineEdit("Lambda 2")
@@ -69,12 +71,12 @@ class Initialization(QMainWindow):
         self.overall_grid.addWidget(self.name_3, 1,2)
         self.overall_grid.addWidget(self.name_4, 1,3)
         
-        self.overall_grid.addWidget(self.template5, 2,0)
+        #self.overall_grid.addWidget(self.template5, 2,0)
         self.overall_grid.addWidget(self.template6, 2,1)
         self.overall_grid.addWidget(self.template7, 2,2)
         self.overall_grid.addWidget(self.template8, 2,3)
         
-        self.overall_grid.addWidget(self.name_5, 3,0)
+        #self.overall_grid.addWidget(self.name_5, 3,0)
         self.overall_grid.addWidget(self.name_6, 3,1)
         self.overall_grid.addWidget(self.name_7, 3,2)
         self.overall_grid.addWidget(self.name_8, 3,3)
@@ -135,18 +137,9 @@ class Initialization(QMainWindow):
         self.test_points()
         
     def test_points(self):
-        # Betriebspunkte Liste
-        #val = 0.3*60*1E3
-        #val2 = 0.1*60*1E3
         
-        val2 = float(self.name_6.text())*1E3
-
-
-        #operation_point_list = [
-        #    Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
-        #    Strategy_OCAE.operation_point_list_entry(val, 25, [6.1, 6.05]),
-        #]
-        
+        val2 = float(self.name_6.text())*1000
+      
         rowdata = []
         for row in range(self.data_table.rowCount()):
                     for column in range(self.data_table.columnCount()):
@@ -164,7 +157,7 @@ class Initialization(QMainWindow):
         print(point_number)
 
         for i in range(0,(point_number*4-4),4):
-            op_time = float(rowdata[i+4]) * 1E3
+            op_time = float(rowdata[i+4]) * 1000
             temperature = float(rowdata[i+5])
             flowrate1 = float(rowdata[i+6])
             flowrate2 = float(rowdata[i+7])
@@ -196,8 +189,10 @@ class Initialization(QMainWindow):
                     self.point_finished_list.append(self.strategy.datalist[-1][0])
                 except:
                     print("no point recorded yet")
-
+        
             self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
+            for i in range(1,len(self.value)):
+                self.value[i] = self.value[i] * random.randrange(90,110)/100
             time_ += 2
         
             self.strategy.push_value(self.value)
@@ -268,6 +263,83 @@ class Initialization(QMainWindow):
                 break
             if self.automat.get_state() == "Error_Thermostat" or self.automat.get_state() == "Error_Pump" or self.automat.get_state() == "Error_Calorimeter" or self.automat.get_state() == "Error":
                 break
+        print("Done")
+    
+    def calorimeter_only(self):
+
+        calorimeter_communication = Communication.Handle("COM6", 9600, Communication.Handle.PARITY_NONE, 1)
+     
+        val2 = float(self.name_6.text())*1E3
+
+        #get the information from the table of the GUI
+        rowdata = []
+        for row in range(self.data_table.rowCount()):
+                    for column in range(self.data_table.columnCount()):
+                        item = self.data_table.item(row, column)
+                        if item is not None:
+                            rowdata.append(item.text())
+                            print(item.text())
+                        else:
+                            break
+        
+        # make a list for the operating points
+        operation_point_list = []
+
+        point_number = len(rowdata) // 4
+        print(point_number)
+
+        # get the data from the rowdata list and transform them into actual operation points and put them in the Strategy list
+        for i in range(0,(point_number*4-4),4):
+            op_time = float(rowdata[i+4]) * 1E3
+            temperature = float(rowdata[i+5])
+            flowrate1 = float(rowdata[i+6])
+            flowrate2 = float(rowdata[i+7])
+            operation_point_list.append(Strategy_OCAE.operation_point_list_entry(op_time, temperature, [flowrate1, flowrate2]))
+
+        print("Number of points: ", len(operation_point_list))
+        
+        # Stoffdaten
+        self.substance_data = Strategy_OCAE.substance_data([4, 6], [50, 50], [40.01, 60.05], ["B", "A"])
+        
+        # Erstellen der Strategie
+        self.strategy = Strategy_OCAE.Output_Calculation_Absolute_Evaluation(operation_point_list, self.substance_data, val2, "strategy_test")
+        
+        self.tmp_op = self.strategy.get_operation_point()
+        
+        new_point = True
+        time_ = 5
+        while self.tmp_op is not None:
+            if new_point:
+                print("new point")
+                temperature = self.tmp_op.get_temperature()
+                calorimeter_communication.send()
+                flowrate_list = []
+                for i in range(self.tmp_op.get_number_of_pumps()):
+                    flowrate_list.append(self.tmp_op.get_flowrate(i))
+                self.strategy.push_actual_flowrate(flowrate_list)
+                new_point = False
+
+                try:
+                    self.point_finished_list.append(self.strategy.datalist[-1][0])
+                except:
+                    print("no point recorded yet")
+
+            #self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
+            self.value = calorimeter_communication.receive().decode('utf-8')
+            time_ += 2
+        
+            self.strategy.push_value(self.value)
+            print(self.value)
+        
+            if self.strategy.has_error():
+                raise Exception("error")
+        
+            if self.strategy.point_complete():
+                new_point = True
+                self.tmp_op = self.strategy.get_operation_point()
+        
+            time.sleep(1)
+        self.strategy.get_finish_instruction()
         print("Done")
 
 def stop_all_Threads():

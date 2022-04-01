@@ -77,6 +77,8 @@ class Graph(QMainWindow):
         self.sub_graph_3.clear()
         self.sub_graph_4.clear()
 
+        self.values = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
+
         self.sub_graph_1.set_title("Reactor Temp")
         self.sub_graph_2.set_title("Inlet Temps")
         self.sub_graph_3.set_title("Voltage")
