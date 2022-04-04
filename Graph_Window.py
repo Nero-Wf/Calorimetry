@@ -125,6 +125,15 @@ class Graph(QMainWindow):
 
         except:
             pass
+    
+        try:
+            lower_limit_temp = int(self.values[1][0]) - 5
+            upper_limit_temp = int(self.values[1][0]) + 5
+            self.sub_graph_1.set_ylim([lower_limit_temp, upper_limit_temp])
+            self.sub_graph_2.set_ylim([lower_limit_temp, upper_limit_temp])
+
+        except:
+            pass
 
         try:
             for i in self.instance.point_finished_list:

@@ -198,7 +198,7 @@ class Initialization(QMainWindow):
             #points:       Time_Data	T_set	T_pre	T_r1	T_r2	T_r3	T_r4	T_r5	T_A	T_B	T_out	U_pre	U_r1	U_r2	U_r3	U_r4	U_r5	PWM_pre	PWM_r1	PWM_r2	PWM_r3	PWM_r4	PWM_r5	mW_pre	mW_r1	mW_r2	mW_r3	mW_r4	mW_r5
             self.value = [time_, temperature, temperature, temperature, temperature,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature - 0.1, -0.02, 0.45, 0.04, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
             for i in range(1,len(self.value)):
-                self.value[i] = round(self.value[i] * random.randrange(95,105)/100,2)
+                self.value[i] = round(self.value[i] * random.randrange(97,103)/100,2)
             time_ += 1
         
             self.strategy.push_value(self.value)
