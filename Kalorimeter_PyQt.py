@@ -37,7 +37,7 @@ class TopLevelWindow(QWidget):
         #now we give each tab a name
         oTabWidget.addTab(oPage1,"Initialization")
         oTabWidget.addTab(oPage2,"Real-Time Data")
-        oTabWidget.addTab(oPage3,"Data Manipulation")
+        oTabWidget.addTab(oPage3,"Output Data")
 
         #this is a fairly complicated part, we give the main window a function which it will call every 2000 miliseconds, to refresh our graphs in the second tab
         self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 500)
@@ -76,4 +76,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    stop_all_Threads()

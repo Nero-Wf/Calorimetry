@@ -164,13 +164,14 @@ class Initialization(QMainWindow):
             temperature = float(rowdata[i+5])
             flowrate1 = float(rowdata[i+6])
             flowrate2 = float(rowdata[i+7])
+            print(flowrate1, flowrate2, " flowrates")
             operation_point_list.append(Strategy_OCAE.operation_point_list_entry(op_time, temperature, [flowrate1, flowrate2]))
 
 
         print("Number of points: ", len(operation_point_list))
         
-        # Stoffdaten
-        self.substance_data = Strategy_OCAE.substance_data([4, 6], [50, 50], [40.01, 60.05], ["B", "A"])
+        # Stoffdaten [mass A, mass B], [volume A, volume B], [molar mass A, molar mass B], [name A, name B]
+        self.substance_data = Strategy_OCAE.substance_data([10, 15], [250, 250], [40.01, 60.05], ["B", "A"])
         
         # Erstellen der Strategie
         self.strategy = Strategy_OCAE.Output_Calculation_Absolute_Evaluation(operation_point_list, self.substance_data, val2, "strategy_test")
@@ -193,10 +194,11 @@ class Initialization(QMainWindow):
                     self.point_finished_list.append(self.strategy.datalist[-1][0])
                 except:
                     print("no point recorded yet")
-        
-            self.value = [time_, temperature, temperature + 1.0, temperature + 0.9, temperature + 0.8,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature + 0.5, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
+
+            #points:       Time_Data	T_set	T_pre	T_r1	T_r2	T_r3	T_r4	T_r5	T_A	T_B	T_out	U_pre	U_r1	U_r2	U_r3	U_r4	U_r5	PWM_pre	PWM_r1	PWM_r2	PWM_r3	PWM_r4	PWM_r5	mW_pre	mW_r1	mW_r2	mW_r3	mW_r4	mW_r5
+            self.value = [time_, temperature, temperature, temperature, temperature,  temperature + 0.7, temperature + 0.6, temperature + 0.5, temperature + 0.5, temperature + 0.5, temperature - 0.1, -0.02, 0.45, 0.04, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0, -4.0, -3.0, -1.0, 0.0, 0.0, 0.0]
             for i in range(1,len(self.value)):
-                self.value[i] = round(self.value[i] * random.randrange(90,110)/100,2)
+                self.value[i] = round(self.value[i] * random.randrange(95,105)/100,2)
             time_ += 1
         
             self.strategy.push_value(self.value)
