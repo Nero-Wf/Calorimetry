@@ -17,6 +17,7 @@ pump_calibration = {
 calorimeter_thermostat = {
     "calibration": Calibration.Thermostat(25, 40, [[25,26], [30, 34], [35, 40]]),
     "25": Calibration.Calorimeter([[1,2,3], [1,2,3], [1,2,3]]),
+    "15": Calibration.Calorimeter([[1,2,3], [1,2,3], [1,2,3]])
     }
 
 pump_head = {

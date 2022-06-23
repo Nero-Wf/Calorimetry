@@ -11,7 +11,7 @@ class Handle:
     PARITY_ODD = serial.PARITY_ODD
     
     def __init__(self, port, baudrate, parity, stopbits):
-        self.com = serial.Serial(port, baudrate, 8, parity, stopbits, timeout=0) 
+        self.com = serial.Serial(port, baudrate, 8, parity, stopbits)# , timeout=0) 
 
     def clear_input_buffer(self):
         self.com.reset_input_buffer()
@@ -21,6 +21,6 @@ class Handle:
         self.com.write(msg)
     
     def receive(self):
-        ans = self.com.read(100)
+        ans = self.com.read_until()
         # print(ans.decode("ASCII"))
         return ans

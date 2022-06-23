@@ -1,7 +1,7 @@
 #first we import all the modules needed for this script
-from PySide6.QtCore import *
-from PySide6.QtWidgets import QMainWindow, QTextEdit, QTableWidget, QMenuBar, QWidget, QGridLayout, QDockWidget, QPlainTextEdit, QFileDialog, QTableWidgetItem
-from PySide6.QtGui import *
+# from PySide6.QtCore import 
+from PySide6.QtWidgets import QMainWindow, QTableWidget, QMenuBar, QWidget, QGridLayout, QFileDialog, QTableWidgetItem
+from PySide6.QtGui import QBrush
 
 import threading
 import csv

@@ -1,5 +1,5 @@
 #first we import all the modules needed for this script
-from PySide6.QtCore import *
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QTabWidget, QWidget, QApplication
 from PySide6.QtGui import QPalette, QCloseEvent
 
@@ -15,14 +15,14 @@ from Data_Processing import Data_Processing
 class TopLevelWindow(QWidget):
 
     def __init__(self):
-        #first we start with this function, to call the initialization of the parent class "QWidget" before we start with our own __init__
+        # first we start with this function, to call the initialization of the parent class "QWidget" before we start with our own __init__
         super().__init__()
 
-        #we start with setting the title of the main window and the geometry of it
+        # we start with setting the title of the main window and the geometry of it
         self.setWindowTitle("AutoOpt")
         self.setGeometry(50,50,1450,700)
 
-        #now we create the tabs in which our three sub-windows will go in
+        # now we create the tabs in which our three sub-windows will go in
         oTabWidget = QTabWidget(self)
 
         #now we create the three sub-windows from the three classes below
@@ -40,7 +40,7 @@ class TopLevelWindow(QWidget):
         oTabWidget.addTab(oPage3,"Output Data")
 
         #this is a fairly complicated part, we give the main window a function which it will call every 2000 miliseconds, to refresh our graphs in the second tab
-        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 500)
+        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 2000)
 
         #finally, we give the command to actually show all the parts we inserted above on the main window
         self.show()
@@ -52,15 +52,15 @@ class TopLevelWindow(QWidget):
 
 def stop_all_Threads():
     """function to stop all threads via the stop command"""
-    #we first declare this variable to be a global variable, and then set it to true.
-    #this stops the loop of the thread.
+    # we first declare this variable to be a global variable, and then set it to true.
+    # this stops the loop of the thread.
     global stop_threads
     stop_threads = True
     print("all Threads stopped")
 
 
-#------------------------------------------------------------------------------
-#now that we have all the needed classes, we actually create an opbject out of them
+# ------------------------------------------------------------------------------
+# now that we have all the needed classes, we actually create an opbject out of them
 def main():
     app = QApplication([])
     app.setStyle("Fusion")
@@ -69,7 +69,7 @@ def main():
     palette.setColor(QPalette.ButtonText, Qt.black)
     app.setPalette(palette)
 
-    #this is the main object, which includes basically all the code from above
+    # this is the main object, which includes basically all the code from above
     Main = TopLevelWindow()
 
     app.exec()
