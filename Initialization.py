@@ -15,9 +15,10 @@ from Data_Processing import Data_Thread
 
 
 class Initialization(QMainWindow):
-    def __init__(self):
+    def __init__(self, instance):
         super().__init__()
 
+        self.instance = instance
         # each of the three classes derives from a "QMainWindow", which means it has a center widget, and some supporting widgets
 
         # first we create some simple labels
@@ -47,7 +48,7 @@ class Initialization(QMainWindow):
         self.start_opt.clicked.connect(lambda:[self.data_thread()])
 
         self.stop_opt = QPushButton("Stop Recording")
-        self.stop_opt.clicked.connect(lambda:[self.thread.stop_all_Threads()])
+        self.stop_opt.clicked.connect(lambda:[self.data_thread.stop_all_Threads()])
 
         # now we make a widget with a specific height
         self.overall_main = QWidget()
@@ -130,8 +131,8 @@ class Initialization(QMainWindow):
         
     def data_thread(self):
         # this is the function that creates a thread which will take our data and put it in the excel sheet
-        self.thread = Data_Thread(self, Initialization)
-        self.thread.start()
+        self.data_thread = Data_Thread(self, Initialization)
+        self.data_thread.start()
 
     def datalogger(self):
         
@@ -374,10 +375,12 @@ class Initialization(QMainWindow):
 
         self.output_values= [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
         
-        while True:
+        while not self.data_thread.stop_threads:
             time.sleep(2)
             self.value = calorimeter_communication.receive().decode('utf-8')
-            self.value = self.value.split()
+            self.values = self.value.split()
+            print(self.value)
+            self.instance.insert_in_table(self.instance, len(self.output_values[0]), self.values)
 
-            for i in len(self.value):
-                self.output_values[i].append(float(self.value[i]))
+            for i in range(len(self.values)):
+                self.output_values[i].append(float(self.values[i]))

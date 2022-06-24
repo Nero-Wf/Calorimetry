@@ -29,8 +29,8 @@ class Graph(QMainWindow):
 
         self.sub_graph_4 = self.graph.add_subplot(224)
         
-        self.sub_graph_1.set_title("Reactor Temp")
-        self.sub_graph_2.set_title("Inlet Temps")
+        self.sub_graph_1.set_title("Inlet Temp")
+        self.sub_graph_2.set_title("Reactor Temps")
         self.sub_graph_3.set_title("Voltage")
         self.sub_graph_4.set_title("PWM")
         
@@ -144,7 +144,7 @@ class Graph(QMainWindow):
         except:
             pass
 
-    def graph_only_plotter(self):
+    def graph_only_plotter(self, buffer):
         
         self.sub_graph_1.clear()
         self.sub_graph_2.clear()
@@ -159,9 +159,9 @@ class Graph(QMainWindow):
         self.sub_graph_4.set_title("PWM")
 
         try:
-            for i in self.instance.output_values:
-                for j in range(len(self.values)):
-                    self.values[j].append(i[j])
+            for i in range(len(self.instance.output_values)):
+                for j in self.instance.output_values[i]:
+                    self.values[i].append(j)
 
             #and then we plot our new values into the empty graphs
               
@@ -209,11 +209,11 @@ class Graph(QMainWindow):
         #except:
         #    pass
 
-        try:
-            for i in self.instance.point_finished_list:
-                self.sub_graph_1.axvline(x=i, color='r')
-                self.sub_graph_2.axvline(x=i, color='r')
-                self.sub_graph_3.axvline(x=i, color='r')
-                self.sub_graph_4.axvline(x=i, color='r')
-        except:
-            pass
+        #try:
+        #    for i in self.instance.point_finished_list:
+        #        self.sub_graph_1.axvline(x=i, color='r')
+        #        self.sub_graph_2.axvline(x=i, color='r')
+        #        self.sub_graph_3.axvline(x=i, color='r')
+        #        self.sub_graph_4.axvline(x=i, color='r')
+        #except:
+        #    pass

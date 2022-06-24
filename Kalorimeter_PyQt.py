@@ -26,9 +26,10 @@ class TopLevelWindow(QWidget):
         oTabWidget = QTabWidget(self)
 
         #now we create the three sub-windows from the three classes below
-        oPage1 = Initialization()
-        oPage2 = Graph(oPage1)
         oPage3 = Data_Processing()
+        oPage1 = Initialization(oPage3)
+        oPage2 = Graph(oPage1)
+
 
         #here we set some margins so that the windows don't touch the main window
         for i in (oPage1, oPage2, oPage3):
@@ -40,7 +41,7 @@ class TopLevelWindow(QWidget):
         oTabWidget.addTab(oPage3,"Output Data")
 
         #this is a fairly complicated part, we give the main window a function which it will call every 2000 miliseconds, to refresh our graphs in the second tab
-        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.real_time_plotter, interval = 2000)
+        self.anim = animation.FuncAnimation(oPage2.graph, oPage2.graph_only_plotter, interval = 2000)
 
         #finally, we give the command to actually show all the parts we inserted above on the main window
         self.show()

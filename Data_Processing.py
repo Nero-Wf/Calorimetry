@@ -13,18 +13,18 @@ class Data_Processing(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.data_table = QTableWidget(30,11)
-        self.data_table.setColumnWidth(0,120)
-        self.data_table.setColumnWidth(1,120)
-        self.data_table.setColumnWidth(2,120)
-        self.data_table.setColumnWidth(3,120)
-        self.data_table.setColumnWidth(4,120)
-        self.data_table.setColumnWidth(5,120)
-        self.data_table.setColumnWidth(6,120)
-        self.data_table.setColumnWidth(7,120)
-        self.data_table.setColumnWidth(8,120)
-        self.data_table.setColumnWidth(9,120)
-        self.data_table.setColumnWidth(10,120)
+        self.data_table = QTableWidget(3000,29)
+        #self.data_table.setColumnWidth(0,120)
+        #self.data_table.setColumnWidth(1,120)
+        #self.data_table.setColumnWidth(2,120)
+        #self.data_table.setColumnWidth(3,120)
+        #self.data_table.setColumnWidth(4,120)
+        #self.data_table.setColumnWidth(5,120)
+        #self.data_table.setColumnWidth(6,120)
+        #self.data_table.setColumnWidth(7,120)
+        #self.data_table.setColumnWidth(8,120)
+        #self.data_table.setColumnWidth(9,120)
+        #self.data_table.setColumnWidth(10,120)
 
         self.menuBar = QMenuBar()
         self.menu = self.menuBar.addMenu("Menu")
@@ -131,7 +131,7 @@ class Data_Processing(QMainWindow):
         """
         cls.txt_edit.insertPlainText(text)
 
-    def insert_in_table(cls,number: int, values):
+    def insert_in_table(self, cls, number: int, values):
 
         for i in range(len(values)):
             item = QTableWidgetItem()
@@ -179,7 +179,7 @@ class Data_Thread(threading.Thread):
         self.task = task
     def run(self):
         self.stop_threads = False
-        while (self.stop_threads == False):
+        while self.stop_threads == False:
             self.task.datalogger(self.use)
             break
         print ("Thread ends")
