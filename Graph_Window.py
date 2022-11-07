@@ -1,11 +1,11 @@
 #first we import all the modules needed for this script
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QMainWindow, QDockWidget, QPlainTextEdit, QMenuBar
-from PySide6.QtGui import QAction
-
-
+from matplotlib.backends.backend_qt5agg import (FigureCanvasQTAgg,
+                                                NavigationToolbar2QT)
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QDockWidget, QMainWindow, QMenuBar,
+                               QPlainTextEdit)
 
 
 class Graph(QMainWindow):

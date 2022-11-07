@@ -1,17 +1,18 @@
 #first we import all the modules needed for this script
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QMainWindow, QGridLayout, QLineEdit, QLabel, QPushButton, QDockWidget, QTableWidget, QPlainTextEdit, QMenuBar, QTableWidgetItem
-from PySide6.QtGui import QAction
-
-import time
 import random
-import serial
+import threading
+import time
 
 import automat.Auto as Auto
-import automat.Strategy_OCAE as Strategy_OCAE
 import automat.Communication as Communication
-
-from Data_Processing import Data_Thread
+import automat.Strategy_OCAE as Strategy_OCAE
+import serial
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import (QDockWidget, QGridLayout, QLabel, QLineEdit,
+                               QMainWindow, QMenuBar, QPlainTextEdit,
+                               QPushButton, QTableWidget, QTableWidgetItem,
+                               QWidget)
 
 
 class Initialization(QMainWindow):
@@ -134,9 +135,6 @@ class Initialization(QMainWindow):
         self.data_thread = Data_Thread(self, Initialization)
         self.data_thread.start()
 
-    def datalogger(self):
-        
-        self.graphs_only()
         
     def test_points(self):
         
@@ -175,7 +173,8 @@ class Initialization(QMainWindow):
         self.strategy = Strategy_OCAE.Output_Calculation_Absolute_Evaluation(operation_point_list, self.substance_data, val2, "strategy_test")
         
         self.tmp_op = self.strategy.get_operation_point()
-        
+
+        self.output_values= [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
         new_point = True
         time_ = 5
         while self.tmp_op is not None:
@@ -201,10 +200,14 @@ class Initialization(QMainWindow):
         
             self.strategy.push_value(self.value)
             print(self.value)
+
+            for i in range(len(self.value)):
+                self.output_values[i].append(float(self.value[i]))
+            self.instance.insert_in_table(self.instance, len(self.output_values[0]), self.value)
+
         
             if self.strategy.has_error():
                 raise Exception("error")
-        
         
             if self.strategy.point_complete():
                 new_point = True
@@ -384,3 +387,25 @@ class Initialization(QMainWindow):
 
             for i in range(len(self.values)):
                 self.output_values[i].append(float(self.values[i]))
+
+
+class Data_Thread(threading.Thread):
+    #this is a class for a thread. It is used to continuously carry out a function while
+    #letting us still use the rest of the GUI.
+    def __init__(self, use, task):
+        super(Data_Thread, self).__init__()
+        self.use = use
+        self.task = task
+    def run(self):
+        self.stop_threads = False
+        while self.stop_threads == False:
+            self.task.test_points(self.use)
+            break
+        print ("Thread ends")
+
+    def stop_all_Threads(self):
+        """function to stop all threads via the stop command"""
+        #we first declare this variable to be a global variable, and then set it to true.
+        #this stops the loop of the thread.
+        self.stop_threads = True
+        print("all Threads stopped")

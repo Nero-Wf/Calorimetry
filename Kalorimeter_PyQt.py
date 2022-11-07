@@ -1,13 +1,11 @@
 #first we import all the modules needed for this script
-from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QTabWidget, QWidget, QApplication
-from PySide6.QtGui import QPalette, QCloseEvent
-
 import matplotlib.animation as animation
-
-from Initialization import Initialization
-from Graph_Window import Graph
 from Data_Processing import Data_Processing
+from Graph_Window import Graph
+from Initialization import Initialization
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QCloseEvent, QPalette
+from PySide6.QtWidgets import QApplication, QTabWidget, QWidget
 
 
 #This is our top level window that we see when we start the script
